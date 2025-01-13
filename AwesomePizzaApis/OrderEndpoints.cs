@@ -15,10 +15,31 @@ public class OrderEndpoints : ICarterModule
         // [GET] /orders
         app.MapGet(
             "orders",
-            async (AppDbContext _context) =>
+            async (AppDbContext _context, IOrderService _orderService) =>
             {
                 List<Order> orders = await _context.Orders.ToListAsync();
+
                 return Results.Ok(orders);
+            }
+        );
+
+        // [GET] /orders/{orderStatus}
+        app.MapGet(
+            "orders/{orderStatus}",
+            async (AppDbContext _context, IOrderService _orderService, string orderStatus) =>
+            {
+                if (!Enum.TryParse<OrderStatus>(orderStatus, out var parsedStatus))
+                {
+                    return Results.BadRequest("Invalid status");
+                }
+
+                List<Order> orders = await _context
+                    .Orders.Where(o => o.Status == parsedStatus)
+                    .ToListAsync();
+
+                var organizedOrders = _orderService.OrganizeOrders(orders);
+
+                return Results.Ok(organizedOrders);
             }
         );
 

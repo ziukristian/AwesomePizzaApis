@@ -16,4 +16,14 @@ public class OrderService : IOrderService
             .OrderBy(x => x.CreatedAt)
             .FirstOrDefault();
     }
+
+    public ICollection<Order> OrganizeOrders(List<Order> orders)
+    {
+        if (orders == null || orders.Count == 0)
+        {
+            return [];
+        }
+
+        return [.. orders.OrderBy(x => x.CreatedAt)];
+    }
 }

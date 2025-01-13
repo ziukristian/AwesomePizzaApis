@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\source\repos\AwesomePizzaApis\AwesomePizzaApis.csproj" />
+    <ProjectReference Include="..\AwesomePizzaApis\AwesomePizzaApis.csproj" />
   </ItemGroup>
 
   <ItemGroup>

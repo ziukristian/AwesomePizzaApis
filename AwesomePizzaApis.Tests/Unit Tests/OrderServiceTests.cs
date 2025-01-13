@@ -102,4 +102,63 @@ public class OrderServiceTests
         result.Status.Should().Be(OrderStatus.Created);
         result.CreatedAt.Should().BeBefore(orders[1].CreatedAt);
     }
+
+    [Fact]
+    public void OrganizeOrders_ShouldReturnEmptyList_WhenOrdersIsNull()
+    {
+        // Act
+        var result = _orderService.OrganizeOrders(null);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void OrganizeOrders_ShouldReturnEmptyList_WhenOrdersIsEmpty()
+    {
+        // Arrange
+        var orders = new List<Order>();
+
+        // Act
+        var result = _orderService.OrganizeOrders(orders);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void OrganizeOrders_ShouldReturnOrderedList_WhenCreatedOrdersExist()
+    {
+        // Arrange
+        var orders = new List<Order>
+        {
+            new()
+            {
+                Status = OrderStatus.Created,
+                CreatedAt = DateTime.Now.AddMinutes(3),
+                PizzaType = "Test",
+                CustomerEmail = "test@mail.com",
+            },
+            new()
+            {
+                Status = OrderStatus.Created,
+                CreatedAt = DateTime.Now.AddMinutes(1),
+                PizzaType = "Test",
+                CustomerEmail = "test@mail.com",
+            },
+            new()
+            {
+                Status = OrderStatus.Finished,
+                CreatedAt = DateTime.Now.AddMinutes(5),
+                PizzaType = "Test",
+                CustomerEmail = "test@mail.com",
+            },
+        };
+
+        // Act
+        var result = _orderService.OrganizeOrders(orders);
+
+        // Assert
+        result.First().CreatedAt.Should().BeBefore(result.Last().CreatedAt);
+    }
 }
