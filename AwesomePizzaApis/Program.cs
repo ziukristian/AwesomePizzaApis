@@ -19,7 +19,7 @@ builder.Services.AddCarter();
 
 var app = builder.Build();
 
-// Auto migration (to not be used in prod)
+// Auto migration (not to be used in prod)
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();

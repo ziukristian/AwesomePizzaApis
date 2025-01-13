@@ -6,10 +6,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AwesomePizzaApis;
 
+public record OrderCreateRequest(string PizzaType, string CustomerEmail);
+
 public class OrderEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
+        // [GET] /orders
+        app.MapGet(
+            "orders",
+            async (AppDbContext _context) =>
+            {
+                List<Order> orders = await _context.Orders.ToListAsync();
+                return Results.Ok(orders);
+            }
+        );
+
         // [GET] /orders/{orderId}/status
         app.MapGet(
             "orders/{orderId}/status",
@@ -89,7 +101,21 @@ public class OrderEndpoints : ICarterModule
                 return Results.Ok();
             }
         );
+
+        // [DELETE] /orders/{orderId}
+        app.MapDelete(
+            "orders/{orderId}",
+            async (AppDbContext _context, int orderId) =>
+            {
+                Order? order = await _context.Orders.FindAsync(orderId);
+                if (order == null)
+                {
+                    return Results.Ok();
+                }
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+                return Results.Ok();
+            }
+        );
     }
 }
-
-public record OrderCreateRequest(string PizzaType, string CustomerEmail);
