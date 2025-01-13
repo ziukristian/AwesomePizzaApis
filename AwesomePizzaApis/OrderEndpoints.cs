@@ -110,6 +110,18 @@ public class OrderEndpoints : ICarterModule
                     return Results.BadRequest("Invalid status");
                 }
 
+                if (parsedStatus == OrderStatus.InProgress)
+                {
+                    Order? orderInProgress = await _context.Orders.FirstOrDefaultAsync(o =>
+                        o.Status == OrderStatus.InProgress
+                    );
+
+                    if (orderInProgress != null)
+                    {
+                        return Results.BadRequest("An order is already in progres");
+                    }
+                }
+
                 Order? order = await _context.Orders.FindAsync(orderId);
 
                 if (order == null)
